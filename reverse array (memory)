@@ -1,0 +1,151 @@
+# Task 3: Reverse Array
+# Your goal for this task is to reverse an array
+# of integers (in place).
+
+# The array will be stored in memory
+# The location of arr[0] is SP
+# The location of arr[1] is SP+1
+# The location of arr[2] is SP+2
+# ... and so on
+
+# The size of the array N will be stored in SP-1
+
+# The SP register may be initialized to any value
+2: 1024; # Initialize the SP register to 1024 (start of the array)
+# ALL other non-constant registers will be initialized to 0
+# regardless of any initializers you use.
+
+[1023]: 7; # N = 8 - the array has 8 elements
+
+[1024]: 1;  # arr[0] = 1
+[1025]: 2;
+[1026]: 3;
+[1027]: 4;
+[1028]: 5;
+[1029]: 6;
+[1030]: 7;
+
+
+# Start your code here
+
+MV 3, 2; 		#3 is now 1024
+ADD 3, 7;		#3 is now 1023
+
+SA 3;
+RD;
+RB 3;			#3 is now the size of the array PERMANENT, DOES NOT CHANGE
+
+MV 4, 3;	
+ADD 4, 7;		# subtracts the size of the array by 1.
+SF 4;			#if size of array - 1 = 0, terminate program
+BIZ end; 
+
+	#checks if array is even or odd
+
+	MV 4, 3; 	#4 will be the checker for even/odd. Right now, size of array
+	AND 4, 6; 	#binary AND with size & 0
+	SF 4;		
+	MV D, 3;		#D holds the size of array and decrements as the loops cycle
+
+	BIZ if_zero_and_even;	#if even, jump to the EVEN case
+	GO if_one_and_odd;
+	
+		#IF ARRAY HAS EVEN NUMBER OF ELEMENTS, GO HERE
+
+		LBL if_zero_and_even;
+		MV 8, 2;		#8 register now has 1024. This will hold the value to swap.
+
+			LBL if_zero_and_even_2;
+			MV 9, 8;		#9: now has 1024, but will change to size -1 value 
+			MV A, D; 	#size of array
+			ADD A, 7;	#decrements size to make loop run correctly
+
+				#THIS LOOPS SETS 9 TO THE LAST ELEMENT IN ARRAY'S MEMORY ADDRESS
+				LBL last_index_loop;
+					ADD A, 7;	#decrement A
+					ADD 9, 6;	#increment 9 (size - 1)
+					SF A;
+
+					#KEEPS ADDING 1 TO INDEX UNTIL A REACHES ZERO
+
+					BIZ last_index_loop_end;
+					GO last_index_loop;
+
+				LBL last_index_loop_end;
+
+			#NOW 8 HOLDS THE MEMORY ADDRESS IN THE FRONT
+			#9 HOLDS THE MEMORY ADDRESS IN THE BACK
+			#THIS GETS THE VALUE AT THE MEMORY ADDRESS AND THEN STORES THEM INTO THE OTHER
+			SA 8;
+			RD;
+			RB B;	#stores the value of index 0 in B
+			SA 9;
+			RD;
+			RB C;	#stores the value of index size - 1 in C
+		
+			SW 9, B;
+			SW 8, C; #swaps the two array values in memory
+		
+			ADD 8, 6;	#increments memory value, from index 0 to 1 for example
+			ADD D, 7;	#D holds the size of the array list. After an iteration
+					#decrease size by 2. (Array of 8 now becomes array of 6 after swap)
+			ADD D, 7;	
+			SF D;
+
+		BIZ end;
+		GO if_zero_and_even_2;
+
+
+
+		#IF ARRAY HAS ODD NUMBER OF ELEMENTS, GO HERE
+		#THIS IS THE EXACT SAME CODE AS THE EVEN CASE, UNLESS NOTED OTHERWISE. SEE COMMENTS ABOVE
+
+		LBL if_one_and_odd;
+		MV F, 2;
+		ADD F, F;
+		MV 8, 2;		
+
+			LBL if_one_and_odd_2;
+			MV 9, 8;		
+			MV A, D; 	
+			ADD A, 7;
+
+	
+				LBL last_index_loop_2;
+					ADD A, 7;	
+					ADD 9, 6;	
+					SF A;
+					BIZ last_index_loop_end_2;
+					GO last_index_loop_2;
+				LBL last_index_loop_end_2;
+
+			SA 8;
+			RD;
+			RB B;	
+			SA 9;
+			RD;
+			RB C;	
+		
+			SW 9, B;
+			SW 8, C; 
+		
+			ADD 8, 6;	
+			ADD D, 7;	
+			ADD D, 7;
+
+				#*********THIS IS THE ADDED CODE FOR THE ODD CASE*******
+
+				MV E, D;		#if array has odd length, don't touch the middle element.
+				ADD E, 7;	  #checks to see if D is 1. If it is, need to exit loop.
+				SF E;
+				BIZ end;		#if only 1 element left in array, jump to end.
+			
+				#*********END NEW CODE FOR THE ODD CASE**************
+
+			SF D;
+
+		BIZ end;
+		GO if_one_and_odd_2;
+
+
+LBL end;
