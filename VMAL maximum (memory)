@@ -1,0 +1,110 @@
+# Task 2: Maximum
+# Your goal for this task is to find the maximum of 3 variables
+# Three variables W, X and Y are stored in the main memory
+# The location of W is SP-3
+# The location of X is SP-2
+# The location of Y is SP-1
+# The location of Z is SP
+# You must set the value of Z to MAX(W, X, Y)
+
+# The value of the SP register will be initialized to some number,
+# which denotes the location of Z (W is at SP-3, X is at SP-2,
+# Y is at SP-1).
+
+# You may NOT initialize any other registers (though you can use
+# any registers you need in your code)
+
+2: 1027; # Initialize the SP register to 1027 (location of Z)
+# ALL other non-constant registers will be initialized to 0
+# regardless of any initializers you use.
+
+[1024]: -1; # Initialize the value of W to -1
+[1025]: 8; # Initialize the value of X to 8
+[1026]: 5; # Initialize the value of Y to 5
+
+# Alternative initialization:
+# 2: 3; # Initialize the SP register to 3 (location of Z)
+#
+# [0]: -1; # Initialize the value of W to -1
+# [1]: 8; # Initialize the value of X to 8
+# [2]: 5; # Initialize the value of Y to 5
+
+# Goal:
+#
+#   Z = MAX(W,X,Y)
+#
+
+# Start your code here
+
+#grabbing the memory values and storing them in the registers
+#A: Y
+#B: X
+#C: W
+#D: MAX(A, B)
+#E: MAX(A, B, C)
+
+
+MV A, 7;
+ADD A, 2; 	#A is now the memory address of Y
+
+MV B, 7;
+ADD B, A; 	#B is now the memory address of X
+
+MV C, 7;
+ADD C, B; 	#C is now the memory address of W
+
+SA A;
+RD; 		#data is now stored in MBR
+RB A; 		#data is now stored in A
+
+SA B;
+RD; 		#data is now stored in MBR
+RB B; 		#data is now stored in B
+
+SA C;
+RD; 		#data is now stored in MBR
+RB C; 		#data is now stored in C
+
+
+#this is the subtraction function from task 1
+NOT D, B;
+ADD D, 6;
+ADD D, A;
+
+#if zero or negative, B is greater
+#if positive, A is greater
+
+SF D;
+
+BIN IF_NEG; 	#if negative, jump below
+MV D, A;
+
+GO IF_END_1;
+
+	LBL IF_NEG; 	#if negative
+	MV D, B;
+
+LBL IF_END_1;
+
+
+#do the subtraction again
+NOT E, C;
+ADD E, 6;
+ADD E, D;
+
+SF E;
+
+BIN IF_NEG_2;
+MV E, D;
+GO IF_END_2;
+
+	LBL IF_NEG_2;	#if negative
+	MV E, C;
+
+LBL IF_END_2;
+
+
+#stores value of D in memory
+SA 2;
+SB E;
+WR;
