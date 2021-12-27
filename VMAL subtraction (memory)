@@ -1,0 +1,47 @@
+# Task 1: Subtraction
+# Your goal for this task is to implement subtraction
+# Two variables X and Y are stored in the main memory
+# The location of X is 1024
+# The location of Y is 1025
+# The location of Z is 1026
+# You must set the value of Z to X - Y
+
+A: 1024; # Initialize the A register to 1024 (location of X)
+B: 1025; # Initialize the B register to 1025 (location of Y)
+C: 1026; # Initialize the C register to 1026 (location of Z)
+
+[1024]: 89; # Initialize the value of X to 8
+[1025]: 54; # Initialize the value of Y to 5
+
+# Goal:
+#
+#   Z = X - Y
+
+
+# Start your code here
+
+# grab the value of X(8) and store it in registry D
+# grab the value of Y(5) and store it in registry E
+# store the value of Z(3) and store it in registry F
+
+#this is the get data portion
+SA A;
+RD; 	#data now stored in MBR
+RB A;	#data now stored in A
+
+SA B;
+RD;	#data now stored in MBR
+RB B;	#data now stored in B
+
+#this is the subtraction portion.
+MV D, A;
+NOT E, B;
+ADD E, 6;
+ADD D, E;
+#correct value is now in registry D
+
+#write data to main memory
+
+SA C;
+SB D;
+WR;
