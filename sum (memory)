@@ -1,0 +1,82 @@
+# Task 3: Array Sum
+# Your goal for this task is to compute the sum of an array
+# of integers.
+
+# The array will be stored in memory
+# The location of arr[0] is SP
+# The location of arr[1] is SP+1
+# The location of arr[2] is SP+2
+# ... and so on
+
+# The size of the array N will be stored in SP-1
+
+# The sum of the array should be placed in location SP-2
+
+# The SP register may be initialized to any value
+2: 1024; # Initialize the SP register to 1024 (start of the array)
+# ALL other non-constant registers will be initialized to 0
+# regardless of any initializers you use.
+
+[1023]: 8; # N = 8 - the array has 8 elements
+
+[1024]: 1;  # arr[0] = 1
+[1025]: -2; # arr[1] = -2
+[1026]: 8;  # arr[2] = 8
+[1027]: 12; # arr[3] = 12
+[1028]: -5; # arr[4] = -5
+[1029]: 0;  # arr[5] = 0
+[1030]: 5;  # arr[6] = 5
+[1031]: 3;  # arr[7] = 3
+
+# For this example, the end value of memory location 1022 should be 22
+
+# Goal:
+#
+#   [SP-2] = [SP] + [SP+1] + ... + [SP+[SP-1]-1]
+#
+
+# Start your code here
+#A: the value from memory
+#B: the total sum
+#C: 
+#3: registry 2's value plus 1
+#4: the size of the array SP-1
+#5: SP-2
+
+
+
+MV 3, 2;		#temp memory address, will be SP + n
+
+#how many times to do this?
+
+MV 4, 2;
+ADD 4, 7;	#now points to memory value 1023
+
+SA 4;		#looks up memory address at SP -1
+RD;
+RB 4;		#now is the correct value to decrement
+
+
+LBL start_loop;
+
+
+SA 3;
+RD; 		#now stored in MBR
+RB A;		#value now stored in A
+
+ADD B, A;	#sum now in B
+
+
+ADD 3, 6;	#increments memory location
+ADD 4, 7;	#decrements number of times we do this
+SF 4;
+BIZ end_loop;
+GO start_loop;
+LBL end_loop;
+
+#final store of value in memory
+MV 5, 2;
+ADD 5, 7;
+ADD 5, 7;	#registry 5 now stores the memory address of where to store final value
+
+SW 5,B;
