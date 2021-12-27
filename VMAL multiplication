@@ -1,0 +1,70 @@
+# Task 1: Multiplication
+
+# Initialize A and B to two positive numbers that are guaranteed to be
+# representable in a 32-bit Two's Complement binary number.
+2: 0;
+3: 0;
+8: 2147483648;
+9: 1;
+A: 5;
+B: 6; 
+C: 0;
+D: 0;
+E: 0; #temp add
+F: 1; #B's Nth bit
+
+# The resulting high bits should be stored in the C register, and the low bits
+# in the D register. For A = 5 and B = 6, C would be 0, and D would be 30.
+
+# Your Code Here
+
+MV 3, B;		#stores B into 3. Must be outside the loop, so that the shifting is saved.
+
+LBL START;
+MV F, 6;		#resets F's value to 1
+AND F, 3; 	#for binary AND of B and 1, to determine whether to add A or 0.
+SF F; 		#jumps if first digit is zero
+BIZ if_zero;
+GO if_ONE;
+
+	LBL if_zero;
+	MV E, 5;		#sets E to zero if ignore
+	GO first_add;
+
+	LBL if_ONE;
+	MV E, A;         #sets E to A if add
+
+LBL first_add;
+ADD C, E;		#ADD
+
+
+#if statement
+MV F, 6;			#resets F to 1
+AND F, C;		#checks to see if the right most bit is 0 or 1.
+SF F;
+RS D, D;			#Right shifts D to make room for the carry
+
+BIZ if_zero_part2;
+GO if_ONE_part2;
+
+	LBL if_zero_part2;
+	#do nothing	#if the last bit of C is zero, do nothing
+	GO second_add;
+
+	LBL if_ONE_part2;
+	ADD D, 8;	#if the last bit of C is 1, add 1000000000000.... To D to carry the bit over
+
+LBL second_add;
+
+RS C, C;			#right shift C AFTER bringing the last bit over to D
+
+
+RS 3, 3;			#right shifts B to get next significant digit
+LS 9, 9;			#incrementer
+SF 9;			#when the incrementer is all the way right shifted, terminate the program
+BIZ END;
+
+GO START;
+LBL END;
+
+
