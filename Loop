@@ -1,0 +1,76 @@
+# Task 4: Weird loop
+# Your goal for this task is to implement the following
+# code in VMAL:
+#
+#  int sum = 0;
+#  for (int i = 0; i < N; i++) {
+#     if (i & 1 == 0) {
+#        sum += i + i;
+#      //sum = sum + i + I;
+#     }
+#     else {
+#        sum -= i;       
+#     //sum = sum - i;
+#     }
+#  }
+# The A register will be initialized to the value of N
+# The B register should hold the resulting sum
+# Your code should work for any value of A
+A: 5; # Initialize the A register to 5
+B: 0; # Initialize the B register to 0 - DO NOT CHANGE
+
+# Goal:
+#
+# B = sum
+#
+# (as described by the code given)
+
+# Start your code here
+#A = Length of loop
+#B = sum
+#C = incrementer
+#D = temp I&1 or temp just I value
+#E = sum-i 
+#F = A - C
+
+#For loop that adds up values of 0 to A
+
+C: 0;				#sets C (i) to zero
+
+LBL START_OF_LOOP;
+	
+	#Exit condition
+	#once A - C == 0, the loop is complete!
+		NOT F, C; 	#invert C
+		ADD F, 6; 	#add 1 for 2's complement
+		ADD F, A; 	#add A and -C and store in F
+		ADD F, 6;
+		SF F;	 	#flag F 
+	BIZ LOOP_COMPLETE; 	#if 0, jump to end of loop!
+
+
+	MV D, C;			#sets D to C's value
+	AND D, 6;		#Binary AND of C and 1, stored in D
+	SF D;
+
+	BIZ IF_EVEN_ZERO;
+	GO IF_ONE_ODD;
+
+		LBL IF_EVEN_ZERO;
+		MV D, C; 	#reassigns D to C's value (i)
+		ADD D, D;	#adds i + i
+		ADD B, D;	#adds sum + i + i
+
+		ADD C, 6;	#increment C
+		GO START_OF_LOOP;
+
+	LBL IF_ONE_ODD;
+
+	NOT E, C;		#inverts C and store it in E
+	ADD E, 6;		#adds C + 1 for 2's complement
+	ADD B, E;		#Adds B to - i
+
+	ADD C, 6;		#increment C
+	GO START_OF_LOOP;
+
+LBL LOOP_COMPLETE;
